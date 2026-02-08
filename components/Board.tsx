@@ -75,9 +75,16 @@ const Board: React.FC<BoardProps> = ({
       
       <div className="flex">
         {/* Row Numbers (Left Side) */}
-        <div className="flex flex-col justify-between py-[4px] pr-1.5 text-[8px] sm:text-[10px] font-bold text-slate-400 dark:text-ocean-300 select-none">
+        {/* Changed to Grid to match the board structure perfectly */}
+        <div className={cn(
+          "grid grid-rows-10 gap-px pr-1.5 text-[8px] sm:text-[10px] font-bold text-slate-400 dark:text-ocean-300 select-none",
+          "py-[2px] sm:py-1",     // Matches Board Padding
+          "my-[2px] sm:my-[3px]"  // Matches Board Border
+        )}>
           {ROWS.map(r => (
-            <div key={r} className="flex-1 flex items-center justify-end w-3 sm:w-5">{r}</div>
+            <div key={r} className="flex items-center justify-end w-3 sm:w-5">
+              {r}
+            </div>
           ))}
         </div>
 
