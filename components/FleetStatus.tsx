@@ -36,7 +36,7 @@ export const FleetStatus: React.FC<FleetStatusProps> = ({ ships, isEnemy, classN
           const shipName = t.ships[ship.id as keyof typeof t.ships] || ship.name;
           
           return (
-            <div key={ship.id} className="bg-white/50 dark:bg-white/5 px-2 py-1.5 rounded border border-slate-100 dark:border-white/5 flex items-center justify-between min-w-0 transition-colors hover:bg-white/80 dark:hover:bg-white/10">
+            <div key={ship.id} className="bg-white/50 dark:bg-white/5 px-2 py-1.5 rounded border border-slate-100 dark:border-white/5 flex items-center justify-between min-w-0 transition-colors hover:bg-white/80 dark:hover:bg-white/10 h-9">
                {/* Left: Name */}
                <span className={cn(
                  "text-xs font-bold truncate mr-2 flex-1",

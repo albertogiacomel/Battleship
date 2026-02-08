@@ -421,9 +421,9 @@ const App: React.FC = () => {
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-y-auto min-h-0 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-ocean-700">
-           {/* CHANGED: xl:items-start -> xl:items-stretch to force full height columns */}
-           <div className="min-h-full flex flex-col xl:flex-row gap-4 xl:items-stretch justify-center py-2">
+        <main className="flex-1 overflow-y-auto min-h-0 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-ocean-700 flex flex-col">
+           {/* Added my-auto for vertical centering in fullscreen/tall viewports */}
+           <div className="flex flex-col xl:flex-row gap-4 xl:items-stretch justify-center py-2 my-auto">
             
             {/* Sidebar (Controls + Feed) */}
             <div className="w-full xl:w-80 flex-shrink-0 flex flex-col gap-4 order-2 xl:order-1">
@@ -450,8 +450,7 @@ const App: React.FC = () => {
 
                {/* --- IMPROVED LIVE FEED (Redesigned) --- */}
                {gameState.phase !== 'setup' && (
-                 /* CHANGED: Removed h-[300px] shrink-0, Added flex-1 min-h-[300px] */
-                 <div className="hidden xl:flex flex-col rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white/60 dark:bg-black/20 backdrop-blur-md flex-1 shadow-lg min-h-[300px]">
+                 <div className="hidden xl:flex flex-col rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white/60 dark:bg-black/20 backdrop-blur-md h-[780px] shadow-lg">
                     {/* Header */}
                     <div className="px-4 py-3 bg-slate-50/80 dark:bg-white/5 border-b border-slate-200 dark:border-white/5 flex items-center justify-between shrink-0">
                        <div className="flex items-center gap-2">
@@ -510,19 +509,20 @@ const App: React.FC = () => {
                 </div>
               ) : (
                 <>
-                  <div className="flex flex-row flex-wrap xl:flex-nowrap gap-6 justify-center items-start content-start w-full">
+                  {/* CHANGED: items-end to items-start for top alignment of Intel cards */}
+                  <div className="flex flex-row flex-wrap xl:flex-nowrap gap-6 justify-center items-start w-full">
                     
                     {/* ENEMY BOARD */}
-                    <div className={cn(
-                      "relative transition-all duration-500 w-full flex-1 max-w-[500px] min-w-[300px] flex flex-col gap-3",
-                      gameState.turn === 'human' ? "scale-100 opacity-100" : "scale-[0.98] opacity-85 grayscale-[0.3]"
-                    )}>
+                    {/* CHANGED: Removed scale/opacity classes. Added static transition */}
+                    <div className="relative w-full flex-1 max-w-[500px] min-w-[300px] flex flex-col gap-3 transition-colors duration-300">
                        <FleetStatus ships={gameState.aiShips} isEnemy={true} lang={lang} />
                        
-                       {/* REMOVED aspect-square and overflow-hidden to fix Row 10 visibility */}
                        <div className={cn(
-                         "relative rounded-xl p-1 transition-all duration-300 bg-white/30 dark:bg-black/20 border border-slate-200 dark:border-white/5",
-                         gameState.turn === 'human' && "ring-2 ring-blue-500 dark:ring-ocean-400 shadow-[0_0_30px_-5px_rgba(59,130,246,0.3)]"
+                         "relative rounded-xl p-1 transition-all duration-300 bg-white/30 dark:bg-black/20 border",
+                         /* CHANGED: Simplified logic to only use border/ring color, no opacity changes */
+                         gameState.turn === 'human' 
+                           ? "border-blue-500/50 ring-2 ring-blue-500 dark:ring-ocean-400 shadow-[0_0_30px_-5px_rgba(59,130,246,0.3)]"
+                           : "border-slate-200 dark:border-white/5"
                        )}>
                           <Board 
                             title={t.enemyWaters}
@@ -544,16 +544,16 @@ const App: React.FC = () => {
                     </div>
 
                     {/* PLAYER BOARD */}
-                    <div className={cn(
-                       "relative transition-all duration-500 w-full flex-1 max-w-[500px] min-w-[300px] flex flex-col gap-3",
-                       gameState.turn === 'ai' ? "scale-100" : "scale-[0.98] opacity-85"
-                    )}>
+                    {/* CHANGED: Removed scale/opacity classes. */}
+                    <div className="relative w-full flex-1 max-w-[500px] min-w-[300px] flex flex-col gap-3 transition-colors duration-300">
                        <FleetStatus ships={gameState.humanShips} isEnemy={false} lang={lang} />
                        
-                       {/* REMOVED aspect-square and overflow-hidden here too */}
                        <div className={cn(
-                         "relative rounded-xl p-1 transition-all duration-300 bg-white/30 dark:bg-black/20 border border-slate-200 dark:border-white/5",
-                         gameState.turn === 'ai' && "ring-2 ring-red-500 dark:ring-red-500 shadow-[0_0_30px_-5px_rgba(239,68,68,0.3)]"
+                         "relative rounded-xl p-1 transition-all duration-300 bg-white/30 dark:bg-black/20 border",
+                         /* CHANGED: Simplified logic to only use border/ring color */
+                         gameState.turn === 'ai' 
+                           ? "border-red-500/50 ring-2 ring-red-500 dark:ring-red-500 shadow-[0_0_30px_-5px_rgba(239,68,68,0.3)]"
+                           : "border-slate-200 dark:border-white/5"
                        )}>
                          <Board 
                            title={t.homeFleet}
