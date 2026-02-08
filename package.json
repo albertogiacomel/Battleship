@@ -9,12 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "lucide-react": "0.344.0",
-    "canvas-confetti": "1.9.2",
-    "clsx": "2.1.0",
-    "tailwind-merge": "2.2.1"
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.4.0",
+    "lucide-react": "^0.563.0",
+    "canvas-confetti": "^1.9.4"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
