@@ -64,12 +64,30 @@ const App: React.FC = () => {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        // Only restore if valid phase
-        if (parsed.gameState && parsed.gameState.phase !== 'setup') {
-          setGameState(parsed.gameState);
+        const loadedState = parsed.gameState;
+
+        // Basic validation: ensure essential arrays exist
+        if (
+          loadedState &&
+          loadedState.phase !== 'setup' &&
+          Array.isArray(loadedState.humanGrid) &&
+          Array.isArray(loadedState.aiGrid)
+        ) {
+           // MIGRATION: Fix 'logs' if missing (breaking change fix for older saves)
+           if (!loadedState.logs || !Array.isArray(loadedState.logs)) {
+              const oldLog = (loadedState as any).lastLog;
+              loadedState.logs = oldLog ? [oldLog] : ["Battle resumed."];
+           }
+           
+           // Ensure ships arrays exist
+           if (!Array.isArray(loadedState.humanShips)) loadedState.humanShips = [];
+           if (!Array.isArray(loadedState.aiShips)) loadedState.aiShips = [];
+
+           setGameState(loadedState);
         }
       } catch (e) {
         console.error("Failed to load save", e);
+        localStorage.removeItem(STORAGE_KEY); // Clear corrupted save
       }
     }
   }, []);
@@ -446,7 +464,8 @@ const App: React.FC = () => {
                     </div>
                     
                     <div className="flex-1 overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-ocean-700 space-y-1 relative">
-                       {gameState.logs.map((log, i) => (
+                       {/* Ensure gameState.logs is an array before mapping to prevent crashes on state corruption */}
+                       {Array.isArray(gameState.logs) && gameState.logs.map((log, i) => (
                          <div key={i} className={cn(
                            "text-xs sm:text-sm font-mono py-1 px-1.5 rounded border-l-2 transition-all animate-in fade-in slide-in-from-left-1",
                            i === 0 
