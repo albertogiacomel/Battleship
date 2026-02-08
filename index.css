@@ -8,7 +8,8 @@
   }
   
   body {
-    @apply bg-slate-50 text-slate-900 transition-colors duration-500 antialiased;
+    @apply bg-slate-50 text-slate-900 transition-colors duration-500 antialiased overflow-hidden;
+    overscroll-behavior: none; /* Previene il bounce scroll su Mac/iOS */
   }
   
   .dark body {
@@ -22,17 +23,22 @@
     scrollbar-width: thin;
   }
   
+  /* Targetting Webkit scrollbar based on parent class */
   .scrollbar-thumb-slate-300::-webkit-scrollbar-thumb {
     @apply bg-slate-300 rounded-full;
+    border: 2px solid transparent;
+    background-clip: content-box;
   }
   
   .dark .scrollbar-thumb-ocean-700::-webkit-scrollbar-thumb {
     @apply bg-ocean-700 rounded-full;
+    border: 2px solid transparent;
+    background-clip: content-box;
   }
 
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
   }
 
   ::-webkit-scrollbar-track {
