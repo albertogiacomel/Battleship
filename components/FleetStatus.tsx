@@ -28,16 +28,16 @@ export const FleetStatus: React.FC<FleetStatusProps> = ({ ships, isEnemy, classN
          {isEnemy ? <ShieldAlert className="w-3 h-3 text-red-500" /> : <Shield className="w-3 h-3 text-green-500" />}
          {isEnemy ? t.enemyIntel : t.alliedStatus}
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+      <div className="grid grid-cols-2 gap-2">
         {ships.map(ship => {
           const isSunk = ship.hits === ship.size;
           const shipName = t.ships[ship.id as keyof typeof t.ships] || ship.name;
           return (
-            <div key={ship.id} className="bg-white/50 dark:bg-white/5 p-2 rounded border border-slate-100 dark:border-white/5 flex flex-col justify-center min-w-0 transition-colors hover:bg-white/80 dark:hover:bg-white/10">
+            <div key={ship.id} className="bg-white/50 dark:bg-white/5 p-2 rounded border border-slate-100 dark:border-white/5 flex flex-col justify-center min-w-0 transition-colors hover:bg-white/80 dark:hover:bg-white/10 overflow-hidden">
                {/* Header Row: Name + Status/Percentage */}
-               <div className="flex justify-between items-center mb-1.5 w-full">
+               <div className="flex justify-between items-center mb-1.5 w-full overflow-hidden">
                   <span className={cn(
-                    "text-xs font-bold truncate mr-2",
+                    "text-xs font-bold truncate mr-2 flex-1",
                     isSunk ? "line-through text-slate-400" : "text-slate-700 dark:text-slate-200"
                   )} title={shipName}>
                     {shipName}
@@ -70,7 +70,7 @@ export const FleetStatus: React.FC<FleetStatusProps> = ({ ships, isEnemy, classN
                  <div className="flex gap-1 h-1.5 items-center">
                     {Array.from({length: ship.size}).map((_, i) => (
                       <div key={i} className={cn(
-                        "w-1.5 h-1.5 rounded-full",
+                        "w-1.5 h-1.5 rounded-full shrink-0",
                         isSunk ? "bg-red-900/40" : "bg-slate-300 dark:bg-white/20"
                       )}></div>
                     ))}

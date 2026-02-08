@@ -65,11 +65,13 @@ const Board: React.FC<BoardProps> = ({
 
   return (
     <div className={cn("flex flex-col gap-2", className)}>
-      <h3 className="text-lg sm:text-xl font-black tracking-wider flex items-center gap-2 drop-shadow-sm text-slate-800 dark:text-ocean-100">
-        {title}
-        {isPlayer && <span className="text-[10px] bg-blue-600 dark:bg-ocean-600 text-white px-2 py-0.5 rounded-full shadow-sm align-middle">{t.you}</span>}
-        {!isPlayer && <span className="text-[10px] bg-red-600 text-white px-2 py-0.5 rounded-full shadow-sm align-middle">{t.enemy}</span>}
-      </h3>
+      <div className="h-8 flex items-center">
+        <h3 className="text-lg sm:text-xl font-black tracking-wider flex items-center gap-2 drop-shadow-sm text-slate-800 dark:text-ocean-100 whitespace-nowrap overflow-hidden">
+          <span className="truncate">{title}</span>
+          {isPlayer && <span className="text-[10px] bg-blue-600 dark:bg-ocean-600 text-white px-2 py-0.5 rounded-full shadow-sm align-middle shrink-0">{t.you}</span>}
+          {!isPlayer && <span className="text-[10px] bg-red-600 text-white px-2 py-0.5 rounded-full shadow-sm align-middle shrink-0">{t.enemy}</span>}
+        </h3>
+      </div>
       
       <div className="flex">
         {/* Row Numbers (Left Side) */}

@@ -44,5 +44,5 @@ export interface GameState {
   aiShips: PlacedShip[];
   humanGrid: Grid;
   aiGrid: Grid;
-  lastLog: string;
+  logs: string[]; // Changed from lastLog to logs array
 }

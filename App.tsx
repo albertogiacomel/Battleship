@@ -21,7 +21,7 @@ import {
 import Board from './components/Board';
 import GameControls from './components/GameControls';
 import { FleetStatus } from './components/FleetStatus';
-import { Anchor, Radar, Globe, Maximize, Sun, Moon, Volume2, VolumeX } from 'lucide-react';
+import { Anchor, Radar, Maximize, Sun, Moon, Volume2, VolumeX } from 'lucide-react';
 import { cn } from './lib/utils';
 import { DICTIONARY } from './lib/translations';
 import { playGameSound } from './lib/sound';
@@ -45,7 +45,7 @@ const App: React.FC = () => {
     aiShips: [],
     humanGrid: createEmptyGrid(),
     aiGrid: createEmptyGrid(),
-    lastLog: DICTIONARY.en.deployMsg,
+    logs: [DICTIONARY.en.deployMsg],
   });
 
   const t = DICTIONARY[lang];
@@ -67,7 +67,6 @@ const App: React.FC = () => {
         // Only restore if valid phase
         if (parsed.gameState && parsed.gameState.phase !== 'setup') {
           setGameState(parsed.gameState);
-          // Restore settings if desired, or keep user prefs separate
         }
       } catch (e) {
         console.error("Failed to load save", e);
@@ -124,7 +123,7 @@ const App: React.FC = () => {
     if (l.includes('hit') || l.includes('sunk') || l.includes('colpo') || l.includes('affondata')) return 'text-red-600 dark:text-red-400';
     if (l.includes('miss') || l.includes('mancato')) return 'text-blue-600 dark:text-blue-300';
     if (l.includes('victory') || l.includes('vittoria')) return 'text-amber-600 dark:text-yellow-400';
-    return 'text-slate-700 dark:text-ocean-100';
+    return 'text-slate-600 dark:text-ocean-200';
   };
 
   const getCoordinateString = (x: number, y: number) => {
@@ -164,7 +163,7 @@ const App: React.FC = () => {
       aiShips: [],
       humanGrid: createEmptyGrid(),
       aiGrid: createEmptyGrid(),
-      lastLog: t.deployMsg,
+      logs: [t.deployMsg],
     });
     setSetupShips([]);
     setSetupGrid(createEmptyGrid());
@@ -181,7 +180,7 @@ const App: React.FC = () => {
       humanGrid: setupGrid,
       aiShips: aiShips,
       aiGrid: aiGrid,
-      lastLog: t.battleStart,
+      logs: [t.battleStart, ...prev.logs],
     }));
     playSfx('start');
   };
@@ -234,14 +233,14 @@ const App: React.FC = () => {
       playSfx('miss');
     }
 
-    const logMessage = `Player 1 - cell ${coord} - ${resultStr}`;
+    const logMessage = `Player: ${coord} - ${resultStr}`;
 
     setGameState(prev => ({
       ...prev,
       aiGrid: newAiGrid,
       aiShips: newAiShips,
       turn: winner ? 'human' : nextTurn,
-      lastLog: winner ? t.victory : logMessage,
+      logs: winner ? [t.victory, logMessage, ...prev.logs] : [logMessage, ...prev.logs],
       winner: winner,
       phase: winner ? 'gameover' : 'playing'
     }));
@@ -318,14 +317,14 @@ const App: React.FC = () => {
       playSfx('miss');
     }
 
-    const logMessage = `AI - cell ${coord} - ${resultStr}`;
+    const logMessage = `AI: ${coord} - ${resultStr}`;
 
     setGameState(prev => ({
       ...prev,
       humanGrid: newHumanGrid,
       humanShips: newHumanShips,
       turn: winner ? 'ai' : nextTurn,
-      lastLog: winner ? t.defeat : logMessage,
+      logs: winner ? [t.defeat, logMessage, ...prev.logs] : [logMessage, ...prev.logs],
       winner: winner,
       phase: winner ? 'gameover' : 'playing'
     }));
@@ -434,25 +433,40 @@ const App: React.FC = () => {
                  lang={lang}
                />
 
-               {/* Game Log - Compact */}
+               {/* Game Log - Scrollable List */}
                {gameState.phase !== 'setup' && (
                  <div className={cn(
-                   "p-3 rounded-xl border h-28 md:h-auto md:flex-1 min-h-[100px] overflow-y-auto font-mono text-xs sm:text-sm shadow-inner scrollbar-thin transition-colors",
+                   "flex flex-col rounded-xl border h-48 md:h-auto md:flex-1 min-h-[150px] overflow-hidden shadow-inner transition-colors relative",
                    "bg-white/80 border-slate-200 shadow-slate-200/50", 
                    "dark:bg-black/40 dark:border-white/10 dark:shadow-none"
                  )}>
-                    <div className="flex items-center gap-2 mb-2 text-slate-500 dark:text-gray-500 text-[10px] uppercase tracking-wider font-bold">
+                    <div className="p-3 bg-slate-50 dark:bg-white/5 border-b border-slate-200 dark:border-white/5 flex items-center gap-2 text-slate-500 dark:text-gray-400 text-[10px] uppercase tracking-wider font-bold shrink-0">
                        <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
                        Live Feed
                     </div>
-                    <p className={cn("font-bold transition-all", getLogColor(gameState.lastLog))}>
-                      {">"} {gameState.lastLog}
-                    </p>
+                    
+                    <div className="flex-1 overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-ocean-700 space-y-1 relative">
+                       {gameState.logs.map((log, i) => (
+                         <div key={i} className={cn(
+                           "text-xs sm:text-sm font-mono py-1 px-1.5 rounded border-l-2 transition-all animate-in fade-in slide-in-from-left-1",
+                           i === 0 
+                              ? "bg-slate-100 dark:bg-white/10 border-blue-500 dark:border-ocean-400 font-bold" 
+                              : "border-transparent opacity-70",
+                           getLogColor(log)
+                         )}>
+                           <span className="opacity-50 mr-1.5 text-[10px]">{i === 0 ? '>' : '#'}</span>
+                           {log}
+                         </div>
+                       ))}
+                       
+                       {/* Gradient fade at bottom to indicate scroll */}
+                       <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white/80 dark:from-black/80 to-transparent pointer-events-none"></div>
+                    </div>
                  </div>
                )}
             </div>
 
-            {/* Boards Container */}
+            {/* Boards Container - Stable Layout */}
             <div className="flex-1 w-full order-1 md:order-2 flex flex-col items-center justify-center">
               
               {gameState.phase === 'setup' ? (
@@ -471,11 +485,11 @@ const App: React.FC = () => {
                   />
                 </div>
               ) : (
-                <div className="flex flex-row flex-wrap xl:flex-nowrap gap-4 sm:gap-6 justify-center items-start content-start">
+                <div className="flex flex-row flex-wrap xl:flex-nowrap gap-4 sm:gap-6 justify-center items-start content-start w-full">
                   
                   {/* Enemy Board + Intel */}
                   <div className={cn(
-                    "relative transition-all duration-500 w-full md:w-auto flex-1 max-w-[340px] lg:max-w-[380px] xl:max-w-[420px] flex flex-col gap-2",
+                    "relative transition-all duration-500 w-full flex-1 max-w-[450px] flex flex-col gap-2",
                     gameState.turn === 'human' 
                       ? "scale-100 opacity-100"
                       : "scale-[0.98] opacity-80"
@@ -507,7 +521,7 @@ const App: React.FC = () => {
 
                   {/* Player Board + Status */}
                   <div className={cn(
-                     "relative transition-all duration-500 w-full md:w-auto flex-1 max-w-[340px] lg:max-w-[380px] xl:max-w-[420px] flex flex-col gap-2",
+                     "relative transition-all duration-500 w-full flex-1 max-w-[450px] flex flex-col gap-2",
                      gameState.turn === 'ai' 
                        ? "scale-100"
                        : "scale-[0.98] opacity-80"
