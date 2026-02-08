@@ -341,13 +341,13 @@ const App: React.FC = () => {
   // --- Render ---
 
   return (
-    <div className="min-h-screen font-sans selection:bg-blue-500/30 transition-colors duration-500 bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-white flex items-center justify-center p-4">
+    <div className="h-[100dvh] w-full font-sans selection:bg-blue-500/30 transition-colors duration-500 bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-white flex flex-col overflow-hidden">
       {/* Background decoration */}
       <div className="fixed inset-0 -z-10 transition-colors duration-500 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-100 via-slate-100 to-slate-200 dark:from-ocean-900/40 dark:via-slate-950 dark:to-slate-950"></div>
       
-      <div className="w-full max-w-[1400px] flex flex-col max-h-[95vh]">
-        {/* Header - Compact */}
-        <header className="mb-4 flex flex-row items-center justify-between border-b border-slate-300 dark:border-ocean-800/50 pb-3 gap-2 transition-colors flex-shrink-0">
+      <div className="w-full h-full flex flex-col max-w-[1400px] mx-auto p-3 sm:p-4">
+        {/* Header - Fixed Top */}
+        <header className="flex-none mb-4 flex flex-row items-center justify-between border-b border-slate-300 dark:border-ocean-800/50 pb-3 gap-2 transition-colors z-20">
            <div className="flex items-center gap-2 sm:gap-3">
               <div className="p-2 rounded-lg shadow-lg bg-blue-600 dark:bg-ocean-600 text-white shadow-blue-500/30 dark:shadow-ocean-500/20">
                 <Anchor className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -404,125 +404,128 @@ const App: React.FC = () => {
            </div>
         </header>
 
-        {/* Main Game Area */}
-        <main className="flex-1 flex flex-col md:flex-row gap-4 items-start justify-center h-full min-h-0 overflow-y-auto md:overflow-visible">
-          
-          {/* Controls / Status Panel - Side or Bottom */}
-          <div className="w-full md:w-64 lg:w-72 xl:w-80 flex-shrink-0 order-2 md:order-1 flex flex-col gap-4">
-             <GameControls 
-               phase={gameState.phase}
-               orientation={orientation}
-               setOrientation={setOrientation}
-               unplacedShips={SHIPS.slice(currentShipIndex)}
-               onRandomize={handleRandomize}
-               onReset={handleReset}
-               onStart={handleStartGame}
-               winner={gameState.winner}
-               currentShip={gameState.phase === 'setup' ? SHIPS[currentShipIndex] : null}
-               humanGrid={gameState.humanGrid}
-               aiGrid={gameState.aiGrid}
-               humanShips={gameState.humanShips}
-               aiShips={gameState.aiShips}
-               aiEndpoint={aiEndpoint}
-               setAiEndpoint={setAiEndpoint}
-               difficulty={difficulty}
-               setDifficulty={setDifficulty}
-             />
-
-             {/* Game Log - Compact */}
-             {gameState.phase !== 'setup' && (
-               <div className={cn(
-                 "p-3 rounded-xl border h-28 md:h-auto md:flex-1 min-h-[100px] overflow-y-auto font-mono text-xs sm:text-sm shadow-inner scrollbar-thin transition-colors",
-                 "bg-white/80 border-slate-200 shadow-slate-200/50", 
-                 "dark:bg-black/40 dark:border-white/10 dark:shadow-none"
-               )}>
-                  <div className="flex items-center gap-2 mb-2 text-slate-500 dark:text-gray-500 text-[10px] uppercase tracking-wider font-bold">
-                     <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                     Live Feed
-                  </div>
-                  <p className={cn("font-bold transition-all", getLogColor(gameState.lastLog))}>
-                    {">"} {gameState.lastLog}
-                  </p>
-               </div>
-             )}
-          </div>
-
-          {/* Boards Container */}
-          <div className="flex-1 w-full order-1 md:order-2 flex flex-col gap-4 h-full">
+        {/* Main Game Area - Scrollable Container */}
+        <main className="flex-1 overflow-y-auto min-h-0 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-ocean-700">
+           {/* Inner wrapper ensures centering if content is small, but allows scroll if content is large */}
+           <div className="min-h-full flex flex-col md:flex-row gap-4 items-center justify-center py-2">
             
-            {gameState.phase === 'setup' ? (
-              <div className="max-w-md lg:max-w-lg mx-auto w-full animate-in zoom-in duration-500">
-                <Board 
-                  title={t.setupTitle}
-                  grid={setupGrid} 
-                  ships={setupShips} 
-                  isPlayer={true} 
-                  isPlacementPhase={true}
-                  currentShipToPlace={SHIPS[currentShipIndex]}
-                  orientation={orientation}
-                  onPlaceShip={handlePlaceShip}
-                  className="mx-auto"
-                />
-              </div>
-            ) : (
-              <div className="flex flex-row flex-wrap xl:flex-nowrap gap-4 sm:gap-6 justify-center items-start h-full content-start">
-                
-                {/* Enemy Board + Intel */}
-                <div className={cn(
-                  "relative transition-all duration-500 w-full md:w-auto flex-1 max-w-[340px] lg:max-w-[380px] xl:max-w-[420px] flex flex-col gap-2",
-                  gameState.turn === 'human' 
-                    ? "scale-100 opacity-100"
-                    : "scale-[0.98] opacity-80"
-                )}>
-                   {/* Enemy Fleet Intel */}
-                   <FleetStatus ships={gameState.aiShips} isEnemy={true} />
+            {/* Controls / Status Panel - Side or Bottom */}
+            <div className="w-full md:w-64 lg:w-72 xl:w-80 flex-shrink-0 order-2 md:order-1 flex flex-col gap-4">
+               <GameControls 
+                 phase={gameState.phase}
+                 orientation={orientation}
+                 setOrientation={setOrientation}
+                 unplacedShips={SHIPS.slice(currentShipIndex)}
+                 onRandomize={handleRandomize}
+                 onReset={handleReset}
+                 onStart={handleStartGame}
+                 winner={gameState.winner}
+                 currentShip={gameState.phase === 'setup' ? SHIPS[currentShipIndex] : null}
+                 humanGrid={gameState.humanGrid}
+                 aiGrid={gameState.aiGrid}
+                 humanShips={gameState.humanShips}
+                 aiShips={gameState.aiShips}
+                 aiEndpoint={aiEndpoint}
+                 setAiEndpoint={setAiEndpoint}
+                 difficulty={difficulty}
+                 setDifficulty={setDifficulty}
+               />
 
-                   <div className={cn(
-                     "relative rounded-xl overflow-hidden transition-all duration-300",
-                     gameState.turn === 'human' && "ring-4 ring-blue-500/30 dark:ring-ocean-500/30 shadow-2xl"
-                   )}>
-                      <Board 
-                        title={t.enemyWaters}
-                        grid={gameState.aiGrid} 
-                        ships={gameState.aiShips} 
-                        isPlayer={false}
-                        onCellClick={handleHumanFire}
-                      />
-                      {gameState.turn === 'ai' && (
-                        <div className="absolute inset-0 bg-white/10 dark:bg-black/20 backdrop-blur-[1px] rounded-lg z-20 flex items-center justify-center pointer-events-none">
-                           <span className="text-blue-900 dark:text-white font-black animate-pulse tracking-widest bg-white/80 dark:bg-black/50 px-4 py-2 rounded border border-blue-200 dark:border-white/10 shadow-lg text-sm sm:text-base">
-                             {t.enemyTargeting}
-                           </span>
-                        </div>
-                      )}
-                   </div>
+               {/* Game Log - Compact */}
+               {gameState.phase !== 'setup' && (
+                 <div className={cn(
+                   "p-3 rounded-xl border h-28 md:h-auto md:flex-1 min-h-[100px] overflow-y-auto font-mono text-xs sm:text-sm shadow-inner scrollbar-thin transition-colors",
+                   "bg-white/80 border-slate-200 shadow-slate-200/50", 
+                   "dark:bg-black/40 dark:border-white/10 dark:shadow-none"
+                 )}>
+                    <div className="flex items-center gap-2 mb-2 text-slate-500 dark:text-gray-500 text-[10px] uppercase tracking-wider font-bold">
+                       <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                       Live Feed
+                    </div>
+                    <p className={cn("font-bold transition-all", getLogColor(gameState.lastLog))}>
+                      {">"} {gameState.lastLog}
+                    </p>
+                 </div>
+               )}
+            </div>
+
+            {/* Boards Container */}
+            <div className="flex-1 w-full order-1 md:order-2 flex flex-col items-center justify-center">
+              
+              {gameState.phase === 'setup' ? (
+                <div className="max-w-md lg:max-w-lg mx-auto w-full animate-in zoom-in duration-500">
+                  <Board 
+                    title={t.setupTitle}
+                    grid={setupGrid} 
+                    ships={setupShips} 
+                    isPlayer={true} 
+                    isPlacementPhase={true}
+                    currentShipToPlace={SHIPS[currentShipIndex]}
+                    orientation={orientation}
+                    onPlaceShip={handlePlaceShip}
+                    className="mx-auto"
+                  />
                 </div>
+              ) : (
+                <div className="flex flex-row flex-wrap xl:flex-nowrap gap-4 sm:gap-6 justify-center items-start content-start">
+                  
+                  {/* Enemy Board + Intel */}
+                  <div className={cn(
+                    "relative transition-all duration-500 w-full md:w-auto flex-1 max-w-[340px] lg:max-w-[380px] xl:max-w-[420px] flex flex-col gap-2",
+                    gameState.turn === 'human' 
+                      ? "scale-100 opacity-100"
+                      : "scale-[0.98] opacity-80"
+                  )}>
+                     {/* Enemy Fleet Intel */}
+                     <FleetStatus ships={gameState.aiShips} isEnemy={true} />
 
-                {/* Player Board + Status */}
-                <div className={cn(
-                   "relative transition-all duration-500 w-full md:w-auto flex-1 max-w-[340px] lg:max-w-[380px] xl:max-w-[420px] flex flex-col gap-2",
-                   gameState.turn === 'ai' 
-                     ? "scale-100"
-                     : "scale-[0.98] opacity-80"
-                )}>
-                   {/* Allied Fleet Status */}
-                   <FleetStatus ships={gameState.humanShips} isEnemy={false} />
+                     <div className={cn(
+                       "relative rounded-xl overflow-hidden transition-all duration-300",
+                       gameState.turn === 'human' && "ring-4 ring-blue-500/30 dark:ring-ocean-500/30 shadow-2xl"
+                     )}>
+                        <Board 
+                          title={t.enemyWaters}
+                          grid={gameState.aiGrid} 
+                          ships={gameState.aiShips} 
+                          isPlayer={false}
+                          onCellClick={handleHumanFire}
+                        />
+                        {gameState.turn === 'ai' && (
+                          <div className="absolute inset-0 bg-white/10 dark:bg-black/20 backdrop-blur-[1px] rounded-lg z-20 flex items-center justify-center pointer-events-none">
+                             <span className="text-blue-900 dark:text-white font-black animate-pulse tracking-widest bg-white/80 dark:bg-black/50 px-4 py-2 rounded border border-blue-200 dark:border-white/10 shadow-lg text-sm sm:text-base">
+                               {t.enemyTargeting}
+                             </span>
+                          </div>
+                        )}
+                     </div>
+                  </div>
 
-                   <div className={cn(
-                     "relative rounded-xl overflow-hidden transition-all duration-300",
-                     gameState.turn === 'ai' && "ring-4 ring-red-400/50 dark:ring-red-500/30 shadow-2xl"
-                   )}>
-                     <Board 
-                       title={t.homeFleet}
-                       grid={gameState.humanGrid} 
-                       ships={gameState.humanShips}
-                       isPlayer={true}
-                     />
-                   </div>
+                  {/* Player Board + Status */}
+                  <div className={cn(
+                     "relative transition-all duration-500 w-full md:w-auto flex-1 max-w-[340px] lg:max-w-[380px] xl:max-w-[420px] flex flex-col gap-2",
+                     gameState.turn === 'ai' 
+                       ? "scale-100"
+                       : "scale-[0.98] opacity-80"
+                  )}>
+                     {/* Allied Fleet Status */}
+                     <FleetStatus ships={gameState.humanShips} isEnemy={false} />
+
+                     <div className={cn(
+                       "relative rounded-xl overflow-hidden transition-all duration-300",
+                       gameState.turn === 'ai' && "ring-4 ring-red-400/50 dark:ring-red-500/30 shadow-2xl"
+                     )}>
+                       <Board 
+                         title={t.homeFleet}
+                         grid={gameState.humanGrid} 
+                         ships={gameState.humanShips}
+                         isPlayer={true}
+                       />
+                     </div>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+           </div>
         </main>
       </div>
     </div>
