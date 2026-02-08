@@ -14,7 +14,9 @@
     "clsx": "^2.1.1",
     "tailwind-merge": "^3.4.0",
     "lucide-react": "^0.563.0",
-    "canvas-confetti": "^1.9.4"
+    "canvas-confetti": "^1.9.4",
+    "vite": "^7.3.1",
+    "@vitejs/plugin-react": "^5.1.3"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
