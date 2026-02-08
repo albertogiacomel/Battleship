@@ -2,7 +2,7 @@
 export default {
   content: [
     "./index.html",
-    "./**/*.{js,ts,jsx,tsx}",
+    "./src/**/*.{js,ts,jsx,tsx}",
   ],
   darkMode: 'class',
   theme: {
@@ -21,26 +21,33 @@ export default {
           900: '#0c4a6e',
           950: '#082f49',
         },
-        ship: {
-          gray: '#64748b',
-          dark: '#334155'
-        }
       },
       animation: {
         'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'splash': 'splash 0.5s ease-out forwards',
-        'shake': 'shake 0.5s ease-in-out',
         'spin-slow': 'spin 3s linear infinite',
+        'float': 'float 4s ease-in-out infinite',
+        'sink': 'sink 3s ease-in-out infinite',
+        'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
+        'zoom-in': 'zoomIn 0.2s ease-out',
       },
       keyframes: {
-        splash: {
-          '0%': { transform: 'scale(0)', opacity: '1' },
-          '100%': { transform: 'scale(1.5)', opacity: '0' },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-3px)' },
+        },
+        sink: {
+          '0%, 100%': { opacity: '0.8' },
+          '50%': { opacity: '0.6' },
         },
         shake: {
-          '0%, 100%': { transform: 'translateX(0)' },
-          '25%': { transform: 'translateX(-2px)' },
-          '75%': { transform: 'translateX(2px)' },
+          '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
+          '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
+          '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
+          '40%, 60%': { transform: 'translate3d(4px, 0, 0)' },
+        },
+        zoomIn: {
+          '0%': { opacity: '0', transform: 'scale(0.95)' },
+          '100%': { opacity: '1', transform: 'scale(1)' },
         }
       }
     },

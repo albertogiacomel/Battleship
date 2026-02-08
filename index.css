@@ -3,33 +3,48 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    color-scheme: light dark;
+  }
+  
   body {
-    @apply bg-slate-50;
+    @apply bg-slate-50 text-slate-900 transition-colors duration-500 antialiased;
   }
+  
   .dark body {
-    @apply bg-slate-900;
+    @apply bg-slate-950 text-white;
   }
 }
 
-/* Ship Animation Classes */
-.ship-container {
-  will-change: transform, filter;
+@layer utilities {
+  /* Cross-browser Custom Scrollbar */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+  
+  .scrollbar-thumb-slate-300::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 rounded-full;
+  }
+  
+  .dark .scrollbar-thumb-ocean-700::-webkit-scrollbar-thumb {
+    @apply bg-ocean-700 rounded-full;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 dark:bg-white/10 rounded-full hover:bg-slate-400 dark:hover:bg-white/20 transition-colors;
+  }
 }
 
-@keyframes sink-pulse {
-  0%, 100% { opacity: 0.8; }
-  50% { opacity: 0.6; }
-}
-
-@keyframes subtle-float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-2px); }
-}
-
-.ship-sunk {
-  animation: sink-pulse 3s ease-in-out infinite;
-}
-
-.ship-alive {
-  animation: subtle-float 4s ease-in-out infinite;
+/* Optimization for animations */
+.will-change-transform {
+  will-change: transform;
 }

@@ -111,8 +111,8 @@ const ShipGraphic: React.FC<ShipGraphicProps> = ({ ship, className, isPreview = 
   return (
     <div 
       className={cn(
-        "absolute pointer-events-none ship-container flex items-center justify-center",
-        isSunk ? "ship-sunk" : (isPreview ? "" : "ship-alive"), // Disable float animation for preview
+        "absolute pointer-events-none will-change-transform flex items-center justify-center",
+        isSunk ? "animate-sink" : (isPreview ? "" : "animate-float"), 
         className
       )}
       style={containerStyle}
