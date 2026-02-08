@@ -341,76 +341,74 @@ const App: React.FC = () => {
   // --- Render ---
 
   return (
-    <div className="min-h-screen font-sans selection:bg-blue-500/30 transition-colors duration-500 bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-white">
+    <div className="min-h-screen font-sans selection:bg-blue-500/30 transition-colors duration-500 bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-white flex items-center justify-center p-4">
       {/* Background decoration */}
       <div className="fixed inset-0 -z-10 transition-colors duration-500 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-100 via-slate-100 to-slate-200 dark:from-ocean-900/40 dark:via-slate-950 dark:to-slate-950"></div>
       
-      <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col min-h-screen">
-        {/* Header */}
-        <header className="mb-8 flex flex-col md:flex-row items-center justify-between border-b border-slate-300 dark:border-ocean-800/50 pb-6 gap-4 transition-colors">
-           <div className="flex items-center gap-3">
-              <div className="p-3 rounded-xl shadow-lg bg-blue-600 dark:bg-ocean-600 text-white shadow-blue-500/30 dark:shadow-ocean-500/20">
-                <Anchor className="w-8 h-8" />
+      <div className="w-full max-w-[1400px] flex flex-col max-h-[95vh]">
+        {/* Header - Compact */}
+        <header className="mb-4 flex flex-row items-center justify-between border-b border-slate-300 dark:border-ocean-800/50 pb-3 gap-2 transition-colors flex-shrink-0">
+           <div className="flex items-center gap-2 sm:gap-3">
+              <div className="p-2 rounded-lg shadow-lg bg-blue-600 dark:bg-ocean-600 text-white shadow-blue-500/30 dark:shadow-ocean-500/20">
+                <Anchor className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
-              <div>
-                <h1 className="text-3xl font-black tracking-tight text-slate-800 dark:text-white">{t.title}</h1>
-                <p className="text-sm tracking-widest uppercase font-bold text-blue-600 dark:text-ocean-300">
+              <div className="flex flex-col">
+                <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-800 dark:text-white leading-none">{t.title}</h1>
+                <p className="hidden sm:block text-xs tracking-widest uppercase font-bold text-blue-600 dark:text-ocean-300">
                   {t.subtitle}
                 </p>
               </div>
            </div>
 
            {/* Menu Controls */}
-           <div className="flex flex-wrap items-center gap-2 md:gap-4 justify-center md:justify-end">
-              
-              <div className="flex items-center bg-white dark:bg-white/5 rounded-full p-1 border border-slate-200 dark:border-white/10 shadow-sm">
-                <button 
-                  onClick={() => setLang(l => l === 'en' ? 'it' : 'en')}
-                  className="p-2 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors text-slate-600 dark:text-slate-300"
-                  title="Change Language"
-                >
-                  <Globe className="w-5 h-5" />
-                  <span className="sr-only">Language</span>
-                </button>
-                <button 
-                  onClick={() => setTheme(th => th === 'dark' ? 'light' : 'dark')}
-                  className="p-2 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors text-slate-600 dark:text-slate-300"
-                  title="Toggle Theme"
-                >
-                  {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-                </button>
-                <button 
-                  onClick={() => setSoundEnabled(s => !s)}
-                  className="p-2 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors text-slate-600 dark:text-slate-300"
-                  title="Toggle Sound"
-                >
-                  {soundEnabled ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
-                </button>
-                <button 
-                  onClick={toggleFullScreen}
-                  className="p-2 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors text-slate-600 dark:text-slate-300"
-                  title="Fullscreen"
-                >
-                  <Maximize className="w-5 h-5" />
-                </button>
-              </div>
-
+           <div className="flex items-center gap-2">
               <div className={cn(
-                "flex items-center gap-4 text-sm font-bold px-4 py-2 rounded-full border hidden md:flex shadow-sm transition-colors",
+                "hidden sm:flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-full border shadow-sm transition-colors mr-2",
                 "bg-white text-blue-700 border-blue-200",
                 "dark:bg-ocean-900/30 dark:text-ocean-200 dark:border-white/5"
               )}>
-                  <Radar className={cn("w-5 h-5", gameState.phase === 'playing' && "animate-spin-slow text-green-500 dark:text-green-400")} />
+                  <Radar className={cn("w-4 h-4", gameState.phase === 'playing' && "animate-spin-slow text-green-500 dark:text-green-400")} />
                   <span>{gameState.phase === 'setup' ? t.systemsCheck : t.combatMode}</span>
+              </div>
+
+              <div className="flex items-center bg-white dark:bg-white/5 rounded-full p-1 border border-slate-200 dark:border-white/10 shadow-sm">
+                <button 
+                  onClick={() => setLang(l => l === 'en' ? 'it' : 'en')}
+                  className="p-1.5 sm:p-2 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors text-slate-600 dark:text-slate-300"
+                  title="Change Language"
+                >
+                  <Globe className="w-4 h-4" />
+                </button>
+                <button 
+                  onClick={() => setTheme(th => th === 'dark' ? 'light' : 'dark')}
+                  className="p-1.5 sm:p-2 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors text-slate-600 dark:text-slate-300"
+                  title="Toggle Theme"
+                >
+                  {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                </button>
+                <button 
+                  onClick={() => setSoundEnabled(s => !s)}
+                  className="p-1.5 sm:p-2 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors text-slate-600 dark:text-slate-300"
+                  title="Toggle Sound"
+                >
+                  {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+                </button>
+                <button 
+                  onClick={toggleFullScreen}
+                  className="p-1.5 sm:p-2 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors text-slate-600 dark:text-slate-300 hidden sm:block"
+                  title="Fullscreen"
+                >
+                  <Maximize className="w-4 h-4" />
+                </button>
               </div>
            </div>
         </header>
 
         {/* Main Game Area */}
-        <main className="flex-1 flex flex-col lg:flex-row gap-8 items-start">
+        <main className="flex-1 flex flex-col md:flex-row gap-4 items-start justify-center h-full min-h-0 overflow-y-auto md:overflow-visible">
           
-          {/* Controls / Status Panel */}
-          <div className="w-full lg:w-80 flex-shrink-0 order-2 lg:order-1">
+          {/* Controls / Status Panel - Side or Bottom */}
+          <div className="w-full md:w-64 lg:w-72 xl:w-80 flex-shrink-0 order-2 md:order-1 flex flex-col gap-4">
              <GameControls 
                phase={gameState.phase}
                orientation={orientation}
@@ -431,15 +429,15 @@ const App: React.FC = () => {
                setDifficulty={setDifficulty}
              />
 
-             {/* Game Log */}
+             {/* Game Log - Compact */}
              {gameState.phase !== 'setup' && (
                <div className={cn(
-                 "mt-4 p-4 rounded-xl border h-32 overflow-y-auto font-mono text-sm shadow-inner scrollbar-thin transition-colors",
+                 "p-3 rounded-xl border h-28 md:h-auto md:flex-1 min-h-[100px] overflow-y-auto font-mono text-xs sm:text-sm shadow-inner scrollbar-thin transition-colors",
                  "bg-white/80 border-slate-200 shadow-slate-200/50", 
                  "dark:bg-black/40 dark:border-white/10 dark:shadow-none"
                )}>
-                  <div className="flex items-center gap-2 mb-2 text-slate-500 dark:text-gray-500 text-xs uppercase tracking-wider font-bold">
-                     <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                  <div className="flex items-center gap-2 mb-2 text-slate-500 dark:text-gray-500 text-[10px] uppercase tracking-wider font-bold">
+                     <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
                      Live Feed
                   </div>
                   <p className={cn("font-bold transition-all", getLogColor(gameState.lastLog))}>
@@ -450,10 +448,10 @@ const App: React.FC = () => {
           </div>
 
           {/* Boards Container */}
-          <div className="flex-1 w-full order-1 lg:order-2 flex flex-col gap-8">
+          <div className="flex-1 w-full order-1 md:order-2 flex flex-col gap-4 h-full">
             
             {gameState.phase === 'setup' ? (
-              <div className="max-w-xl mx-auto w-full animate-in zoom-in duration-500">
+              <div className="max-w-md lg:max-w-lg mx-auto w-full animate-in zoom-in duration-500">
                 <Board 
                   title={t.setupTitle}
                   grid={setupGrid} 
@@ -467,14 +465,14 @@ const App: React.FC = () => {
                 />
               </div>
             ) : (
-              <div className="flex flex-col lg:flex-row gap-8 justify-center items-center lg:items-start">
+              <div className="flex flex-row flex-wrap xl:flex-nowrap gap-4 sm:gap-6 justify-center items-start h-full content-start">
                 
                 {/* Enemy Board + Intel */}
                 <div className={cn(
-                  "relative transition-all duration-500 w-full max-w-[400px] flex flex-col gap-4",
+                  "relative transition-all duration-500 w-full md:w-auto flex-1 max-w-[340px] lg:max-w-[380px] xl:max-w-[420px] flex flex-col gap-2",
                   gameState.turn === 'human' 
                     ? "scale-100 opacity-100"
-                    : "scale-95 opacity-80"
+                    : "scale-[0.98] opacity-80"
                 )}>
                    {/* Enemy Fleet Intel */}
                    <FleetStatus ships={gameState.aiShips} isEnemy={true} />
@@ -492,7 +490,7 @@ const App: React.FC = () => {
                       />
                       {gameState.turn === 'ai' && (
                         <div className="absolute inset-0 bg-white/10 dark:bg-black/20 backdrop-blur-[1px] rounded-lg z-20 flex items-center justify-center pointer-events-none">
-                           <span className="text-blue-900 dark:text-white font-black animate-pulse tracking-widest bg-white/80 dark:bg-black/50 px-4 py-2 rounded border border-blue-200 dark:border-white/10 shadow-lg">
+                           <span className="text-blue-900 dark:text-white font-black animate-pulse tracking-widest bg-white/80 dark:bg-black/50 px-4 py-2 rounded border border-blue-200 dark:border-white/10 shadow-lg text-sm sm:text-base">
                              {t.enemyTargeting}
                            </span>
                         </div>
@@ -502,10 +500,10 @@ const App: React.FC = () => {
 
                 {/* Player Board + Status */}
                 <div className={cn(
-                   "relative transition-all duration-500 w-full max-w-[400px] flex flex-col gap-4",
+                   "relative transition-all duration-500 w-full md:w-auto flex-1 max-w-[340px] lg:max-w-[380px] xl:max-w-[420px] flex flex-col gap-2",
                    gameState.turn === 'ai' 
                      ? "scale-100"
-                     : "scale-95 opacity-80"
+                     : "scale-[0.98] opacity-80"
                 )}>
                    {/* Allied Fleet Status */}
                    <FleetStatus ships={gameState.humanShips} isEnemy={false} />

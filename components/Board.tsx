@@ -60,31 +60,31 @@ const Board: React.FC<BoardProps> = ({
   }
 
   return (
-    <div className={cn("flex flex-col gap-3", className)}>
-      <h3 className="text-xl font-black tracking-wider flex items-center gap-2 drop-shadow-sm text-slate-800 dark:text-ocean-100">
+    <div className={cn("flex flex-col gap-2", className)}>
+      <h3 className="text-lg sm:text-xl font-black tracking-wider flex items-center gap-2 drop-shadow-sm text-slate-800 dark:text-ocean-100">
         {title}
-        {isPlayer && <span className="text-xs bg-blue-600 dark:bg-ocean-600 text-white px-2 py-0.5 rounded-full shadow-sm">YOU</span>}
-        {!isPlayer && <span className="text-xs bg-red-600 text-white px-2 py-0.5 rounded-full shadow-sm">ENEMY</span>}
+        {isPlayer && <span className="text-[10px] bg-blue-600 dark:bg-ocean-600 text-white px-2 py-0.5 rounded-full shadow-sm align-middle">YOU</span>}
+        {!isPlayer && <span className="text-[10px] bg-red-600 text-white px-2 py-0.5 rounded-full shadow-sm align-middle">ENEMY</span>}
       </h3>
       
       <div className="flex">
         {/* Row Numbers (Left Side) */}
-        <div className="flex flex-col justify-between py-[5px] pr-2 text-[10px] sm:text-xs font-bold text-slate-400 dark:text-ocean-300 select-none">
+        <div className="flex flex-col justify-between py-[4px] pr-1.5 text-[8px] sm:text-[10px] font-bold text-slate-400 dark:text-ocean-300 select-none">
           {ROWS.map(r => (
-            <div key={r} className="flex-1 flex items-center justify-end w-4 sm:w-6">{r}</div>
+            <div key={r} className="flex-1 flex items-center justify-end w-3 sm:w-5">{r}</div>
           ))}
         </div>
 
         <div className="flex-1">
           {/* Column Letters (Top Side) */}
-          <div className="grid grid-cols-10 mb-1 text-[10px] sm:text-xs font-bold text-slate-400 dark:text-ocean-300 text-center select-none px-[4px]">
+          <div className="grid grid-cols-10 mb-0.5 text-[8px] sm:text-[10px] font-bold text-slate-400 dark:text-ocean-300 text-center select-none px-[2px]">
              {COLS.map(c => <div key={c}>{c}</div>)}
           </div>
 
           {/* The Game Grid */}
           <div 
             className={cn(
-                "grid grid-cols-10 gap-px border-[3px] rounded-lg overflow-hidden p-1 shadow-2xl relative select-none transition-colors",
+                "grid grid-cols-10 gap-px border-[2px] sm:border-[3px] rounded-lg overflow-hidden p-[2px] sm:p-1 shadow-2xl relative select-none transition-colors",
                 // Light Mode: White Border, Soft Blue Shadow
                 "bg-slate-200 border-white shadow-blue-200", 
                 // Dark Mode: Dark Blue Border, Dark Shadow
