@@ -31,7 +31,18 @@ const STORAGE_KEY = 'battleship_save_v1';
 const App: React.FC = () => {
   // --- Settings State ---
   const [lang, setLang] = useState<Language>('en');
-  const [theme, setTheme] = useState<Theme>('dark');
+  
+  // Theme State with Persistence
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('theme');
+      if (saved === 'dark' || saved === 'light') return saved;
+      // Default to dark preference or fallback to dark
+      return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    }
+    return 'dark';
+  });
+
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [difficulty, setDifficulty] = useState<Difficulty>('medium');
   const [aiEndpoint, setAiEndpoint] = useState<string>('');
@@ -99,8 +110,9 @@ const App: React.FC = () => {
     }
   }, [gameState]);
 
-  // Apply Theme Class
+  // Apply Theme Class & Persistence
   useEffect(() => {
+    localStorage.setItem('theme', theme);
     const root = window.document.documentElement;
     root.classList.remove('dark', 'light');
     root.classList.add(theme);
@@ -454,7 +466,7 @@ const App: React.FC = () => {
                {/* Game Log - Scrollable List */}
                {gameState.phase !== 'setup' && (
                  <div className={cn(
-                   "flex flex-col rounded-xl border h-48 md:h-auto md:flex-1 min-h-[150px] overflow-hidden shadow-inner transition-colors relative",
+                   "flex flex-col rounded-xl border h-[250px] overflow-hidden shadow-inner transition-colors relative shrink-0",
                    "bg-white/80 border-slate-200 shadow-slate-200/50", 
                    "dark:bg-black/40 dark:border-white/10 dark:shadow-none"
                  )}>
@@ -469,7 +481,7 @@ const App: React.FC = () => {
                          <div key={i} className={cn(
                            "text-xs sm:text-sm font-mono py-1 px-1.5 rounded border-l-2 transition-all animate-in fade-in slide-in-from-left-1",
                            i === 0 
-                              ? "bg-slate-100 dark:bg-white/10 border-blue-500 dark:border-ocean-400 font-bold" 
+                              ? "bg-slate-100 dark:bg-white/10 border-blue-500 dark:border-ocean-400 font-bold sticky top-0 z-10 shadow-sm" 
                               : "border-transparent opacity-70",
                            getLogColor(log)
                          )}>
@@ -479,7 +491,7 @@ const App: React.FC = () => {
                        ))}
                        
                        {/* Gradient fade at bottom to indicate scroll */}
-                       <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white/80 dark:from-black/80 to-transparent pointer-events-none"></div>
+                       <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white/80 dark:from-black/80 to-transparent pointer-events-none sticky"></div>
                     </div>
                  </div>
                )}
