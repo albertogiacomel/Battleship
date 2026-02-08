@@ -422,7 +422,8 @@ const App: React.FC = () => {
 
         {/* Main Content */}
         <main className="flex-1 overflow-y-auto min-h-0 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-ocean-700">
-           <div className="min-h-full flex flex-col xl:flex-row gap-4 xl:items-start justify-center py-2">
+           {/* CHANGED: xl:items-start -> xl:items-stretch to force full height columns */}
+           <div className="min-h-full flex flex-col xl:flex-row gap-4 xl:items-stretch justify-center py-2">
             
             {/* Sidebar (Controls + Feed) */}
             <div className="w-full xl:w-80 flex-shrink-0 flex flex-col gap-4 order-2 xl:order-1">
@@ -449,7 +450,8 @@ const App: React.FC = () => {
 
                {/* --- IMPROVED LIVE FEED (Redesigned) --- */}
                {gameState.phase !== 'setup' && (
-                 <div className="hidden xl:flex flex-col rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white/60 dark:bg-black/20 backdrop-blur-md h-[300px] shrink-0 shadow-lg">
+                 /* CHANGED: Removed h-[300px] shrink-0, Added flex-1 min-h-[300px] */
+                 <div className="hidden xl:flex flex-col rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white/60 dark:bg-black/20 backdrop-blur-md flex-1 shadow-lg min-h-[300px]">
                     {/* Header */}
                     <div className="px-4 py-3 bg-slate-50/80 dark:bg-white/5 border-b border-slate-200 dark:border-white/5 flex items-center justify-between shrink-0">
                        <div className="flex items-center gap-2">
