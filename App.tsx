@@ -21,7 +21,7 @@ import {
 import Board from './components/Board';
 import GameControls from './components/GameControls';
 import { FleetStatus } from './components/FleetStatus';
-import { Anchor, Radar, Maximize, Sun, Moon, Volume2, VolumeX, Radio, Activity, Target, RotateCcw } from 'lucide-react';
+import { Anchor, Radar, Maximize, Sun, Moon, Volume2, VolumeX, Radio, Activity, Target, RotateCcw, Swords } from 'lucide-react';
 import { cn } from './lib/utils';
 import { DICTIONARY } from './lib/translations';
 import { playGameSound } from './lib/sound';
@@ -45,7 +45,10 @@ const App: React.FC = () => {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [difficulty, setDifficulty] = useState<Difficulty>('medium');
   const [aiEndpoint, setAiEndpoint] = useState<string>('');
-  const logContainerRef = useRef<HTMLDivElement>(null);
+  
+  // Refs for scrolling logs
+  const desktopLogRef = useRef<HTMLDivElement>(null);
+  const mobileLogRef = useRef<HTMLDivElement>(null);
 
   // --- Game State ---
   const [gameState, setGameState] = useState<GameState>({
@@ -111,9 +114,13 @@ const App: React.FC = () => {
     root.classList.add(theme);
   }, [theme]);
 
+  // Smooth scroll to top when logs update
   useEffect(() => {
-    if (logContainerRef.current) {
-      logContainerRef.current.scrollTop = 0;
+    if (desktopLogRef.current) {
+      desktopLogRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    if (mobileLogRef.current) {
+      mobileLogRef.current.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [gameState.logs]);
 
@@ -183,7 +190,13 @@ const App: React.FC = () => {
     }
   };
 
-  const handleReset = () => {
+  const handleReset = (force = false) => {
+    if (!force && gameState.phase === 'playing') {
+      if (!window.confirm("Are you sure you want to restart? Current progress will be lost.")) {
+        return;
+      }
+    }
+    
     localStorage.removeItem(STORAGE_KEY);
     setGameState({
       phase: 'setup',
@@ -393,9 +406,10 @@ const App: React.FC = () => {
 
               <div className="flex items-center bg-white dark:bg-white/5 rounded-full p-1 border border-slate-200 dark:border-white/10 shadow-sm">
                 <button 
-                  onClick={handleReset}
+                  onClick={() => handleReset(false)}
                   className="p-1.5 sm:p-2 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors text-slate-600 dark:text-slate-300"
                   title={t.playAgain}
+                  aria-label={t.playAgain}
                 >
                   <RotateCcw className="w-4 h-4" />
                 </button>
@@ -441,7 +455,7 @@ const App: React.FC = () => {
                  setOrientation={setOrientation}
                  unplacedShips={SHIPS.slice(currentShipIndex)}
                  onRandomize={handleRandomize}
-                 onReset={handleReset}
+                 onReset={() => handleReset(true)}
                  onStart={handleStartGame}
                  winner={gameState.winner}
                  currentShip={gameState.phase === 'setup' ? SHIPS[currentShipIndex] : null}
@@ -458,7 +472,7 @@ const App: React.FC = () => {
 
                {/* --- IMPROVED LIVE FEED (Redesigned) --- */}
                {gameState.phase !== 'setup' && (
-                 <div className="hidden xl:flex flex-col rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white/60 dark:bg-black/20 backdrop-blur-md h-[780px] shadow-lg">
+                 <div className="hidden xl:flex flex-col rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white/60 dark:bg-black/20 backdrop-blur-md flex-1 min-h-[300px] shadow-lg">
                     {/* Header */}
                     <div className="px-4 py-3 bg-slate-50/80 dark:bg-white/5 border-b border-slate-200 dark:border-white/5 flex items-center justify-between shrink-0">
                        <div className="flex items-center gap-2">
@@ -474,7 +488,7 @@ const App: React.FC = () => {
                     </div>
                     
                     {/* Feed Content */}
-                    <div ref={logContainerRef} className="flex-1 overflow-y-auto p-2 scrollbar-thin space-y-1.5">
+                    <div ref={desktopLogRef} className="flex-1 overflow-y-auto p-2 scrollbar-thin space-y-1.5">
                        {Array.isArray(gameState.logs) && gameState.logs.length > 0 ? (
                          gameState.logs.map((log, i) => (
                            <div key={i} className={cn(
@@ -498,6 +512,30 @@ const App: React.FC = () => {
 
             {/* Game Area */}
             <div className="flex-1 w-full flex flex-col items-center justify-start gap-6 order-1 xl:order-2">
+              {/* --- NEW TURN BANNER INDICATOR --- */}
+              {gameState.phase === 'playing' && (
+                 <div className={cn(
+                    "w-full max-w-2xl mx-auto py-2 px-6 rounded-lg font-bold text-center tracking-widest text-sm shadow-lg flex items-center justify-center gap-3 transition-all animate-in slide-in-from-top-4",
+                    gameState.turn === 'human' 
+                      ? "bg-blue-600 text-white shadow-blue-500/30" 
+                      : "bg-red-600 text-white shadow-red-500/30"
+                 )}>
+                    {gameState.turn === 'human' ? (
+                       <>
+                         <Swords className="w-4 h-4 animate-pulse" />
+                         COMMAND: AWAITING ORDERS
+                         <Swords className="w-4 h-4 animate-pulse scale-x-[-1]" />
+                       </>
+                    ) : (
+                       <>
+                         <Target className="w-4 h-4 animate-spin" />
+                         WARNING: ENEMY ATTACK IMMINENT
+                         <Target className="w-4 h-4 animate-spin" />
+                       </>
+                    )}
+                 </div>
+              )}
+
               {gameState.phase === 'setup' ? (
                 <div className="max-w-md lg:max-w-lg mx-auto w-full animate-in zoom-in duration-500">
                   <div className="bg-white/50 dark:bg-ocean-900/20 p-4 rounded-2xl border border-slate-200 dark:border-white/5 shadow-xl">
@@ -580,7 +618,7 @@ const App: React.FC = () => {
                          <div className="px-3 py-2 bg-slate-50/80 dark:bg-white/5 border-b border-slate-200 dark:border-white/5 flex items-center justify-between">
                              <span className="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase">Live Feed</span>
                          </div>
-                         <div ref={logContainerRef} className="flex-1 overflow-y-auto p-2 scrollbar-thin space-y-1">
+                         <div ref={mobileLogRef} className="flex-1 overflow-y-auto p-2 scrollbar-thin space-y-1">
                              {Array.isArray(gameState.logs) && gameState.logs.slice(0, 5).map((log, i) => (
                                 <div key={i} className={cn("text-[10px] p-1.5 rounded border", getLogStyle(log))}>
                                    {log}

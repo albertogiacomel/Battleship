@@ -1,7 +1,6 @@
 import React from 'react';
 import { CellData } from '../types';
 import { cn } from '../lib/utils';
-import { Circle, X } from 'lucide-react';
 import { GAME_ASSETS } from '../constants';
 
 interface CellProps {
@@ -35,13 +34,33 @@ const Cell: React.FC<CellProps> = ({
   const hasVisibleShip = (isPlayer && isShip) || isSunk || (isHit && !isPlayer && cell.shipId);
   const showWater = !isFoggy && !hasVisibleShip;
 
+  // Accessibility helpers
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!disabled && onClick && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
+  const colLabel = String.fromCharCode(65 + cell.x); // A, B, C...
+  const rowLabel = cell.y + 1; // 1, 2, 3...
+  const statusLabel = isPlayer 
+    ? (isShip ? (isHit ? (isSunk ? 'Affondata' : 'Colpita') : 'Nave') : (isMiss ? 'Mancato' : 'Vuota'))
+    : (isHit ? (isSunk ? 'Affondata' : 'Colpita') : (isMiss ? 'Mancato' : 'Sconosciuta'));
+
   return (
     <div
+      role="button"
+      tabIndex={!disabled ? 0 : -1}
+      aria-label={`${colLabel}${rowLabel}, ${statusLabel}`}
+      aria-disabled={disabled}
       onClick={!disabled ? onClick : undefined}
+      onKeyDown={handleKeyDown}
       className={cn(
-        "relative w-full h-full aspect-square border border-white/5 flex items-center justify-center transition-all duration-200 overflow-hidden",
+        "relative w-full h-full aspect-square border border-white/5 flex items-center justify-center transition-all duration-200 overflow-hidden outline-none",
         "bg-ocean-950",
-        !disabled && !isHit && !isMiss && "cursor-crosshair",
+        !disabled && !isHit && !isMiss && "cursor-crosshair hover:bg-white/10",
+        !disabled && "focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:z-50",
         // Subtle Preview Borders/Tint behind the SVG
         isPreview && previewValid && "after:absolute after:inset-0 after:bg-green-500/10 after:border after:border-green-400/50 after:z-20",
         isPreview && !previewValid && "after:absolute after:inset-0 after:bg-red-500/10 after:border after:border-red-400/50 after:z-20",
@@ -52,7 +71,8 @@ const Cell: React.FC<CellProps> = ({
       {isFoggy && (
         <img 
           src={GAME_ASSETS.fog} 
-          alt="Fog" 
+          alt="" 
+          aria-hidden="true"
           className="absolute inset-0 w-full h-full object-cover z-10 opacity-90 animate-in fade-in duration-700"
         />
       )}
@@ -60,7 +80,8 @@ const Cell: React.FC<CellProps> = ({
       {showWater && (
         <img 
           src={GAME_ASSETS.water} 
-          alt="Water" 
+          alt="" 
+          aria-hidden="true"
           className="absolute inset-0 w-full h-full object-cover z-0 opacity-60"
         />
       )}
