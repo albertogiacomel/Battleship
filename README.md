@@ -1,5 +1,7 @@
 > Impostazioni e controlli condivisi: [integrazione Videogames Kit](docs/videogames-kit.md).
 
+Pubblicazione automatica: [configurazione e verifiche](docs/deployment.md).
+
 # React Battleship
 
 A modern, responsive, and tactical Battleship game built with **React**, **Vite**, and **Tailwind CSS**. Features immersive visual effects, smart AI (with adjustable difficulty), and a sleek dark-mode UI.
