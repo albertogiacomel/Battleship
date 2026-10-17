@@ -1,3 +1,4 @@
+import {useGamePreferences,GameKitControls} from './shared/game-kit';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import { SHIPS } from './constants';
@@ -15,13 +16,12 @@ import {
   PlacedShip, 
   Coordinate,
   Language,
-  Theme,
   Difficulty
 } from './types';
 import Board from './components/Board';
 import GameControls from './components/GameControls';
 import { FleetStatus } from './components/FleetStatus';
-import { Anchor, Radar, Maximize, Sun, Moon, Volume2, VolumeX, Radio, Activity, Target, RotateCcw, Swords } from 'lucide-react';
+import { Anchor, Radar, Activity, Target, RotateCcw, Swords } from 'lucide-react';
 import { cn } from './lib/utils';
 import { DICTIONARY } from './lib/translations';
 import { playGameSound } from './lib/sound';
@@ -29,21 +29,11 @@ import { playGameSound } from './lib/sound';
 const STORAGE_KEY = 'battleship_save_v1';
 
 const App: React.FC = () => {
-  // --- Settings State ---
-  const [lang, setLang] = useState<Language>('en');
-  
-  // Theme State with Persistence
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('theme');
-      if (saved === 'dark' || saved === 'light') return saved;
-      return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-    }
-    return 'dark';
-  });
-
-  const [soundEnabled, setSoundEnabled] = useState(true);
-  const [difficulty, setDifficulty] = useState<Difficulty>('medium');
+  const {store: kitStore, preferences: kitPreferences} = useGamePreferences('battleship');
+  const lang = kitPreferences.language as Language;
+  const difficulty = kitPreferences.difficulty as Difficulty;
+  const setDifficulty = (value: Difficulty) => kitStore.update({difficulty:value});
+  const soundEnabled = !kitPreferences.muted && kitPreferences.effects;
   const [aiEndpoint, setAiEndpoint] = useState<string>('');
   
   // Refs for scrolling logs
@@ -107,13 +97,6 @@ const App: React.FC = () => {
     }
   }, [gameState]);
 
-  useEffect(() => {
-    localStorage.setItem('theme', theme);
-    const root = window.document.documentElement;
-    root.classList.remove('dark', 'light');
-    root.classList.add(theme);
-  }, [theme]);
-
   // Smooth scroll to top when logs update
   useEffect(() => {
     if (desktopLogRef.current) {
@@ -143,15 +126,7 @@ const App: React.FC = () => {
     if (soundEnabled) playGameSound(type);
   };
 
-  const toggleFullScreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      }
-    }
-  };
+
 
   const getLogStyle = (log: string) => {
     const l = log.toLowerCase();
@@ -414,30 +389,7 @@ const App: React.FC = () => {
                   <RotateCcw className="w-4 h-4" />
                 </button>
                 <div className="w-px h-4 bg-slate-200 dark:bg-white/10 mx-1"></div>
-                <button 
-                  onClick={() => setLang(l => l === 'en' ? 'it' : 'en')}
-                  className="p-1.5 sm:p-2 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors text-slate-600 dark:text-slate-300 font-bold text-xs"
-                >
-                  {lang.toUpperCase()}
-                </button>
-                <button 
-                  onClick={() => setTheme(th => th === 'dark' ? 'light' : 'dark')}
-                  className="p-1.5 sm:p-2 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors text-slate-600 dark:text-slate-300"
-                >
-                  {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                </button>
-                <button 
-                  onClick={() => setSoundEnabled(s => !s)}
-                  className="p-1.5 sm:p-2 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors text-slate-600 dark:text-slate-300"
-                >
-                  {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-                </button>
-                <button 
-                  onClick={toggleFullScreen}
-                  className="p-1.5 sm:p-2 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors text-slate-600 dark:text-slate-300 hidden sm:block"
-                >
-                  <Maximize className="w-4 h-4" />
-                </button>
+                <GameKitControls gameId="battleship" />
               </div>
            </div>
         </header>

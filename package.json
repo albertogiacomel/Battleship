@@ -5,8 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "build": "node scripts/game-kit-check.mjs && tsc && vite build",
+    "preview": "vite preview",
+    "check:kit": "node scripts/game-kit-check.mjs",
+    "test:kit": "node --test scripts/game-kit-test.mjs",
+    "test:kit:browser": "node scripts/game-kit-browser-test.mjs"
   },
   "dependencies": {
     "canvas-confetti": "^1.9.3",

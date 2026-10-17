@@ -1,5 +1,12 @@
+import {getGameSettings} from '../shared/game-kit';
 // Simple synth engine to avoid loading external assets (Cloud optimization)
 let audioCtx: AudioContext | null = null;
+const settings=getGameSettings('battleship'), activeSources=new Set<AudioScheduledSourceNode>();
+let interacted=false;
+for(const eventName of ['pointerdown','keydown'])document.addEventListener(eventName,event=>{if(event.isTrusted)interacted=true;},{capture:true});
+const allowed=()=>{const p=settings.getSnapshot();return interacted&&!p.muted&&p.effects;};
+const track=(source:AudioScheduledSourceNode)=>{activeSources.add(source);source.onended=()=>activeSources.delete(source);};
+settings.subscribe(()=>{if(!allowed()){for(const source of activeSources)source.stop();activeSources.clear();}});
 
 const initAudio = () => {
   if (!audioCtx) {
@@ -12,6 +19,7 @@ const initAudio = () => {
 };
 
 const createOscillator = (type: OscillatorType, freq: number, duration: number, vol: number = 0.1) => {
+  if(!allowed())return;
   const ctx = initAudio();
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
@@ -25,11 +33,12 @@ const createOscillator = (type: OscillatorType, freq: number, duration: number, 
   osc.connect(gain);
   gain.connect(ctx.destination);
   
-  osc.start();
+  track(osc);osc.start();
   osc.stop(ctx.currentTime + duration);
 };
 
 const createNoise = (duration: number, vol: number = 0.1) => {
+  if(!allowed())return;
   const ctx = initAudio();
   const bufferSize = ctx.sampleRate * duration;
   const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
@@ -56,10 +65,11 @@ const createNoise = (duration: number, vol: number = 0.1) => {
   filter.connect(gain);
   gain.connect(ctx.destination);
   
-  noise.start();
+  track(noise);noise.start();
 };
 
 export const playGameSound = (type: 'hit' | 'miss' | 'sunk' | 'start' | 'click') => {
+  if(!allowed())return;
   try {
     switch (type) {
       case 'miss':
