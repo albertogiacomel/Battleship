@@ -508,7 +508,7 @@ const App: React.FC = () => {
               ) : (
                 <>
                   {/* CHANGED: items-end to items-start for top alignment of Intel cards */}
-                  <div className="flex flex-row flex-wrap xl:flex-nowrap gap-6 justify-center items-start w-full">
+                  <div className="ag-board-grid ag-equal-items">
                     
                     {/* ENEMY BOARD */}
                     {/* CHANGED: Removed scale/opacity classes. Added static transition */}
